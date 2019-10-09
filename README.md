@@ -14,10 +14,11 @@ Then add the following to your babel configuration:
 {
   "plugins": [
     ["@babel/plugin-transform-react-jsx"],
-    ["hyperhtml", {"pragma": "your_own_template_function"}], // when pragma is unset, or no option is given, pragma is simply "html"
+    ["hyperhtml", {"pragma": "your_own_template_function"}],
   ]
 }
 ```
+When pragma option is unset, or no option is given, the template function falls back to "html".
 
 ## Example
 
