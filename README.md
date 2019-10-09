@@ -1,32 +1,58 @@
-# Babel Plugin HyperHTML
+# babel-plugin-jsx-to-html
 
-[![Build Status](https://travis-ci.org/codemix/babel-plugin-hyperhtml.svg?branch=master)](https://travis-ci.org/codemix/babel-plugin-hyperhtml)
+This plugin is forked from [codemix/babel-plugin-hyperhtml](https://github.com/codemix/babel-plugin-hyperhtml), and it's a reduced version of it. While that plugin expects `hyperhtml` as a dependency, this one does not. Also, while that plugin treats JSX inside `Component` superclasses differently, this one treats all JSX's as the same. You can use this plugin with [hyperHTML](https://github.com/WebReflection/hyperHTML), as well as  [lighterhtml](https://github.com/WebReflection/lighterhtml). 
 
-An experimental plugin to bring JSX syntax to [hyperHTML](https://github.com/WebReflection/hyperHTML). 
-
-## Installation
+## Usage
 
 ```
-yarn add --dev babel-plugin-hyperhtml
-```
-or
-```
-npm install --dev babel-plugin-hyperhtml
+npm install --dev babel-plugin-jsx-to-html
 ```
 
 Then add the following to your babel configuration:
 
 ```json
 {
-  "plugins": ["hyperhtml"]
+  "plugins": [
+    ["@babel/plugin-transform-react-jsx"],
+    ["hyperhtml", {"pragma": "your-own-template-function"}],
+  ]
+}
+```
+
+## Example
+
+```js
+const Greet = ({name, ...extra}) => <div {...extra}><h1>Hi {name}</h1></div>
+  
+class DemoComponent extends Component {
+  render() {
+     return (
+       <div class="test">
+         <Greet name="Alice" class="greeter" />
+         <p>This is some text</p>
+       </div>
+     );
+  }
+}
+```
+Transpiles to the following:
+
+```js
+const Greet = ({name, ...extra}) => html`<div ${extra}><h1>Hi ${name}</h1></div>`
+  
+class DemoComponent extends Component {
+  render() {
+     return html`<div class="test">
+         ${new Greet({
+           name: "Alice",
+           class: "greeter"
+         })}
+         <p>This is some text</p>
+       </div>`;
+  }
 }
 ```
 
 ## Usage
 
-TODO: See the tests and [this demo on AST Explorer](http://astexplorer.net/#/gist/bd0aaf31811a4f68e637c330d0472391/d7d74dcb671df9a4746910bbb939b1e6fef5cea8) for now.
-
-
-## License
-
-Published by [codemix](https://codemix.com/) under a permissive [MIT](./LICENSE.md) license.
+See the [demo on AST Explorer](https://astexplorer.net/#/gist/bd0aaf31811a4f68e637c330d0472391/27bce72aac5a3c41b5bb7b1b4cfcac0885abc423) for now.
