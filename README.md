@@ -1,6 +1,6 @@
 # babel-plugin-jsx-to-html
 
-This plugin is forked from [codemix/babel-plugin-hyperhtml](https://github.com/codemix/babel-plugin-hyperhtml), and it's a reduced version of it. While that plugin expects `hyperhtml` as a dependency, this one does not. Also, while that plugin treats JSX inside `Component` superclasses differently, this one treats all JSX's as the same. You can use this plugin with [hyperHTML](https://github.com/WebReflection/hyperHTML), as well as  [lighterhtml](https://github.com/WebReflection/lighterhtml). 
+This plugin is forked from [codemix/babel-plugin-hyperhtml](https://github.com/codemix/babel-plugin-hyperhtml), and it's a reduced version of it. While that plugin expects `hyperhtml` as a dependency, this one does not. Also, while that plugin treats JSX inside `Component` superclasses differently, this one treats all JSX's as the same. You can use this plugin with [hyperHTML](https://github.com/WebReflection/hyperHTML), [lighterhtml](https://github.com/WebReflection/lighterhtml), [htm](https://github.com/developit/htm) and others that uses JavaScript tagged templates. 
 
 ## Usage
 
@@ -14,7 +14,7 @@ Then add the following to your babel configuration:
 {
   "plugins": [
     ["@babel/plugin-transform-react-jsx"],
-    ["hyperhtml", {"pragma": "your-own-template-function"}],
+    ["hyperhtml", {"pragma": "your_own_template_function"}], // when pragma is unset, or no option is given, pragma is simply "html"
   ]
 }
 ```
