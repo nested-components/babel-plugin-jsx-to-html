@@ -1,26 +1,15 @@
 // @flow
 
 import type { NodePath, Node } from "babel-traverse";
-
 type Quasi = { raw: string };
 
-export default function babelPluginHyperHTML({ types: t }) {
+export default function(babel) {
+  const { types: t } = babel;
   class ConversionContext {
-    wirePattern = "hyperHTML.wire";
-    componentPattern = "hyperHTML.Component";
-
-    getWireID() {
-      return this.wirePattern
-        .split(".")
-        .reduce(
-          (expr, part) =>
-            expr === null
-              ? t.identifier(part)
-              : t.memberExpression(expr, t.identifier(part)),
-          null
-        );
+    constructor(state) {
+    	this.pragma = state.opts.pragma || "html"
     }
-
+    
     appendString(quasis: Array<Quasi>, expressions: Array<Node>, raw: string) {
       if (quasis.length > expressions.length) {
         quasis[quasis.length - 1].raw += raw;
@@ -33,42 +22,14 @@ export default function babelPluginHyperHTML({ types: t }) {
       const quasis = [];
       const expressions = [];
       this.convertJSXElement(quasis, expressions, path);
-      if (expressions.length === 1 && quasis.length === 0) {
-        return expressions[0];
-      } else {
-        const parentFn = path.findParent(parent => parent.isFunction());
-        if (parentFn && parentFn.isClassMethod()) {
-          const classPath = parentFn.parentPath.parentPath;
 
-          if (
-            classPath.has("superClass") &&
-            (classPath.get("superClass").node.name === this.componentPattern ||
-              classPath.get("superClass").matchesPattern(this.componentPattern))
-          ) {
-            return t.taggedTemplateExpression(
-              t.memberExpression(t.thisExpression(), t.identifier("html")),
-              t.templateLiteral(
-                quasis.map(item => t.templateElement(item)),
-                expressions
-              )
-            );
-          }
-        }
-
-        const args = [];
-        const target = path.scope.getData("hyperHTML:wireTarget");
-        if (target) {
-          args.push(t.identifier(target));
-        }
-
-        return t.taggedTemplateExpression(
-          t.callExpression(this.getWireID(), args),
-          t.templateLiteral(
-            quasis.map(item => t.templateElement(item)),
-            expressions
-          )
-        );
-      }
+      return t.taggedTemplateExpression(
+        t.identifier(this.pragma),
+        t.templateLiteral(
+          quasis.map(item => t.templateElement(item)),
+          expressions
+        )
+      );
     }
 
     convertJSXElement(
@@ -224,75 +185,9 @@ export default function babelPluginHyperHTML({ types: t }) {
 
   return {
     visitor: {
-      ImportDeclaration(path: NodePath<*>) {
-        if (
-          path.node.source.value !== "hyperhtml" ||
-          path.node.importKind === "type"
-        ) {
-          return;
-        }
-        const context = new ConversionContext();
-        for (const specifier of path.get("specifiers")) {
-          const { node } = specifier;
-          if (
-            node.type === "ImportDefaultSpecifier" ||
-            node.type === "ImportNamespaceSpecifier"
-          ) {
-            context.wirePattern = `${node.local.name}.wire`;
-            context.componentPattern = `${node.local.name}.Component`;
-          } else if (node.imported && node.imported.name === "wire") {
-            context.wirePattern = node.local.name;
-          } else if (node.imported && node.imported.name === "Component") {
-            context.componentPattern = node.local.name;
-          }
-        }
-        path.parentPath.traverse({
-          Function(path: NodePath<*>) {
-            if (path.isArrowFunctionExpression()) {
-              return;
-            }
-            path.scope.setData("hyperHTML:wireTarget", "");
-          },
-          ArrowFunctionExpression(path: NodePath<*>) {
-            const params = path.get("params");
-            if (params.length !== 1) {
-              return;
-            }
-            if (params[0].isObjectPattern() || params[0].isArrayPattern()) {
-              const inserts = [];
-              const pattern = params[0].node;
-              const id = path.scope.generateUidIdentifier("arg");
-              path.scope.setData("hyperHTML:wireTarget", id.name);
-              params[0].replaceWith(id);
-              inserts.push(
-                t.variableDeclaration("let", [
-                  t.variableDeclarator(pattern, id)
-                ])
-              );
-              if (!path.get("body").isBlockStatement()) {
-                path
-                  .get("body")
-                  .replaceWith(
-                    t.blockStatement([
-                      ...inserts,
-                      t.returnStatement(path.node.body)
-                    ])
-                  );
-              } else {
-                path
-                  .get("body")
-                  .replaceWith(
-                    t.blockStatement([...inserts, ...path.node.body.body])
-                  );
-              }
-            } else {
-              path.scope.setData("hyperHTML:wireTarget", params[0].node.name);
-            }
-          },
-          JSXElement(path: NodePath<*>) {
-            path.replaceWith(context.convert(path));
-          }
-        });
+      JSXElement(path: NodePath<*>, state) {
+        const context = new ConversionContext(state);
+        path.replaceWith(context.convert(path));
       }
     }
   };
