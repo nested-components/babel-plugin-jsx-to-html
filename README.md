@@ -56,4 +56,4 @@ class DemoComponent extends Component {
 
 ## Usage
 
-See the [demo on AST Explorer](https://astexplorer.net/#/gist/bd0aaf31811a4f68e637c330d0472391/27bce72aac5a3c41b5bb7b1b4cfcac0885abc423) for now.
+See the [demo on AST Explorer](https://astexplorer.net/#/gist/bd0aaf31811a4f68e637c330d0472391/a112194d8d32dc9a4aa6dd80ad09549449b58dd0) for now.
