@@ -1,9 +1,9 @@
 {
   "name": "babel-plugin-hyperhtml",
   "version": "0.0.4",
-  "description": "Compiles JSX to hyperHTML calls. ",
+  "description": "Compiles JSX to html calls. ",
   "main": "index.js",
-  "repository": "https://github.com/codemix/babel-plugin-hyperhtml",
+  "repository": "https://github.com/nested-components/babel-plugin-jsx-to-html",
   "author": "Charles Pick",
   "license": "MIT",
   "private": false,
