@@ -4,7 +4,7 @@
   "description": "Compiles JSX to html calls. ",
   "main": "index.js",
   "repository": "https://github.com/nested-components/babel-plugin-jsx-to-html",
-  "author": "Charles Pick",
+  "author": "Onur Kerimov",
   "license": "MIT",
   "private": false,
   "scripts": {
