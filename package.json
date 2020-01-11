@@ -1,5 +1,5 @@
 {
-  "name": "babel-plugin-hyperhtml",
+  "name": "babel-plugin-jsx-to-html",
   "version": "0.0.4",
   "description": "Compiles JSX to html calls. ",
   "main": "index.js",
