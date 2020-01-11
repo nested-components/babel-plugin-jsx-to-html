@@ -52,32 +52,44 @@ const Demo = () => html\`<span class=\\"hello\\" visible tabindex=\${-1}/>\`;"
 exports[`plugin Custom Components 1`] = `
 "
 import hyperHTML from \\"hyperhtml\\";
-const Greet = ({ name }) => html;"
+const Greet = ({ name }) => html(Icon, {
+      name: \\"+1\\"
+});"
 `;
 
 exports[`plugin Custom Components with a single child 1`] = `
 "
 import hyperHTML from \\"hyperhtml\\";
-const Greet = ({ name }) => html;"
+const Greet = ({ name }) => html(Foo, {
+      children: [html(Bar, {})]
+});"
 `;
 
 exports[`plugin Custom Components with mixed children 1`] = `
 "
 import hyperHTML from \\"hyperhtml\\";
-const Greet = ({ name }) => html;"
+const Greet = ({ name }) => html(Foo, {
+      children: [html\`<span>Foo</span>\`, \\" Baz \\", html(Icon, {
+            name: \\"ok\\"
+      })]
+});"
 `;
 
 exports[`plugin Custom Components with multiple children 1`] = `
 "
 import hyperHTML from \\"hyperhtml\\";
-const Greet = ({ name }) => html;"
+const Greet = ({ name }) => html(Foo, {
+      children: [html(Bar, {}), html(Baz, {})]
+});"
 `;
 
 exports[`plugin Custom component with boolean property 1`] = `
 "
 import { wire } from 'hyperhtml';
 
-const Demo = () => html;"
+const Demo = () => html(Jumbotron, {
+      big: true
+});"
 `;
 
 exports[`plugin Custom component with object rest 1`] = `
@@ -91,7 +103,9 @@ const Demo = (_ref) => {
       let { name } = _ref,
           extra = _objectWithoutProperties(_ref, ['name']);
 
-      return html;
+      return html(Jumbotron, _extends({}, extra, {
+            children: [html\`<h1>Hi \${name}</h1>\`]
+      }));
 };"
 `;
 
@@ -151,7 +165,9 @@ exports[`plugin MemberExpression in JSX 1`] = `
 "
 import { wire, Component } from 'hyperhtml';
 
-const Demo = props => html;"
+const Demo = props => html(A.B, {
+    children: [\\"Test \\", \\"Testing\\", \\" Tester\\"]
+});"
 `;
 
 exports[`plugin Multiple components 1`] = `

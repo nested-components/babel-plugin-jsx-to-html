@@ -22,14 +22,17 @@ export default function(babel) {
       const quasis = [];
       const expressions = [];
       this.convertJSXElement(quasis, expressions, path);
-
-      return t.taggedTemplateExpression(
-        t.identifier(this.pragma),
-        t.templateLiteral(
-          quasis.map(item => t.templateElement(item)),
-          expressions
-        )
-      );
+      if (expressions.length === 1 && quasis.length === 0) {
+        return expressions[0];
+      } else {
+        return t.taggedTemplateExpression(
+          t.identifier(this.pragma),
+          t.templateLiteral(
+            quasis.map(item => t.templateElement(item)),
+            expressions
+          )
+        );
+      }
     }
 
     convertJSXElement(
